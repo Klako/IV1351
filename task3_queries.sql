@@ -10,7 +10,8 @@ LEFT JOIN individual_lesson ON ts.time_slot_id = individual_lesson.time_slot_id
 LEFT JOIN group_lesson ON ts.time_slot_id = group_lesson.time_slot_id
 LEFT JOIN ensemble ON ts.time_slot_id = ensemble.time_slot_id
 WHERE EXTRACT(YEAR FROM ts.date) = 2023
-GROUP BY "Month";
+GROUP BY "Month"
+ORDER BY MIN(ts.date) ASC;
 
 -- 2
 SELECT r.count AS "No of Siblings", COUNT(r.count) AS "No of Students"

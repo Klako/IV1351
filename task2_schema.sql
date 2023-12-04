@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.0
+-- Dumped from database version 16.1
 -- Dumped by pg_dump version 16.1
 
 SET statement_timeout = 0;
@@ -103,6 +103,45 @@ CREATE TABLE public.genre (
 
 
 ALTER TABLE public.genre OWNER TO postgres;
+
+--
+-- Name: time_slot; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.time_slot (
+    time_slot_id integer NOT NULL,
+    date date NOT NULL,
+    start_time time with time zone NOT NULL,
+    end_time time with time zone NOT NULL,
+    location_id integer
+);
+
+
+ALTER TABLE public.time_slot OWNER TO postgres;
+
+--
+-- Name: ensembles_next_week; Type: VIEW; Schema: public; Owner: postgres
+--
+
+CREATE VIEW public.ensembles_next_week AS
+ SELECT to_char((time_slot.date)::timestamp with time zone, 'Dy'::text) AS "Day",
+    genre.name AS "Genre",
+    ( SELECT
+                CASE
+                    WHEN ((ensemble.max_students - count(ensemble_student.student_id)) <= 0) THEN 'No Seats'::text
+                    WHEN ((ensemble.max_students - count(ensemble_student.student_id)) <= 2) THEN '1 or 2 Seats'::text
+                    ELSE 'Many Seats'::text
+                END AS "case"
+           FROM public.ensemble_student
+          WHERE ((ensemble_student.ensemble_id = ensemble.ensemble_id) AND (ensemble_student.accepted = false))) AS "No of Free Seats"
+   FROM ((public.ensemble
+     JOIN public.time_slot ON ((time_slot.time_slot_id = ensemble.time_slot_id)))
+     JOIN public.genre ON ((genre.genre_id = ensemble.genre)))
+  WHERE ((time_slot.date >= CURRENT_DATE) AND (time_slot.date <= (CURRENT_DATE + '7 days'::interval)))
+  ORDER BY time_slot.date;
+
+
+ALTER VIEW public.ensembles_next_week OWNER TO postgres;
 
 --
 -- Name: genre_genre_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -488,8 +527,8 @@ ALTER TABLE public.student OWNER TO postgres;
 --
 
 CREATE TABLE public.student_sibling (
-    student_1 integer NOT NULL,
-    student_2 integer NOT NULL
+    student_id integer NOT NULL,
+    sibling_student_id integer NOT NULL
 );
 
 
@@ -508,21 +547,6 @@ ALTER TABLE public.student ALTER COLUMN student_id ADD GENERATED ALWAYS AS IDENT
     CACHE 1
 );
 
-
---
--- Name: time_slot; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.time_slot (
-    time_slot_id integer NOT NULL,
-    date date NOT NULL,
-    start_time time with time zone NOT NULL,
-    end_time time with time zone NOT NULL,
-    location_id integer
-);
-
-
-ALTER TABLE public.time_slot OWNER TO postgres;
 
 --
 -- Name: time_slot_time_slot_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -767,7 +791,7 @@ ALTER TABLE ONLY public.student
 --
 
 ALTER TABLE ONLY public.student_sibling
-    ADD CONSTRAINT student_sibling_pkey PRIMARY KEY (student_1, student_2);
+    ADD CONSTRAINT student_sibling_pkey PRIMARY KEY (student_id, sibling_student_id);
 
 
 --
@@ -1007,7 +1031,7 @@ ALTER TABLE ONLY public.rentable_instrument
 --
 
 ALTER TABLE ONLY public.student_sibling
-    ADD CONSTRAINT student_sibling_student_1_fkey FOREIGN KEY (student_1) REFERENCES public.student(student_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+    ADD CONSTRAINT student_sibling_student_1_fkey FOREIGN KEY (student_id) REFERENCES public.student(student_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -1015,7 +1039,7 @@ ALTER TABLE ONLY public.student_sibling
 --
 
 ALTER TABLE ONLY public.student_sibling
-    ADD CONSTRAINT student_sibling_student_2_fkey FOREIGN KEY (student_2) REFERENCES public.student(student_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
+    ADD CONSTRAINT student_sibling_student_2_fkey FOREIGN KEY (sibling_student_id) REFERENCES public.student(student_id) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --

@@ -22,16 +22,19 @@ GROUP BY r.count
 ORDER BY r.count ASC;
 
 -- 3
-SELECT ins.instructor_id AS "Instructor ID", ins.name as "Name",
+SELECT instructor.instructor_id AS "Instructor ID", instructor.name as "Name",
 	COUNT(individual_lesson_id) + COUNT(group_lesson_id) + COUNT(ensemble_id) AS "No of Lessons"
-FROM instructor ins
-LEFT JOIN individual_lesson ON ins.instructor_id = individual_lesson.instructor_id
-LEFT JOIN group_lesson ON ins.instructor_id = group_lesson.instructor_id
-LEFT JOIN ensemble ON ins.instructor_id = ensemble.instructor_id
-GROUP BY ins.instructor_id
+FROM instructor
+LEFT JOIN individual_lesson ON instructor.instructor_id = individual_lesson.instructor_id
+LEFT JOIN group_lesson ON instructor.instructor_id = group_lesson.instructor_id
+LEFT JOIN ensemble ON instructor.instructor_id = ensemble.instructor_id
+LEFT JOIN time_slot ON time_slot.time_slot_id IN (individual_lesson.time_slot_id, group_lesson.time_slot_id, ensemble.time_slot_id)
+WHERE date_trunc('month', current_date) = date_trunc('month', time_slot.date)
+GROUP BY instructor.instructor_id
 HAVING COUNT(individual_lesson_id) + COUNT(group_lesson_id) + COUNT(ensemble_id) > 0;
 
 -- 4
+CREATE VIEW ensembles_next_week AS
 SELECT TO_CHAR(time_slot.date, 'Dy') AS "Day", genre.name AS "Genre",
 	(SELECT CASE
 	 	WHEN ensemble.max_students - COUNT(student_id) <= 0 THEN 'No Seats'
@@ -44,5 +47,7 @@ FROM ensemble
 JOIN time_slot ON time_slot.time_slot_id = ensemble.time_slot_id
 JOIN genre ON genre.genre_id = ensemble.genre
 WHERE time_slot.date BETWEEN current_date AND current_date + interval '1 week'
-ORDER BY time_slot.date ASC
+ORDER BY time_slot.date ASC;
+
+SELECT * FROM ensembles_next_week;
 

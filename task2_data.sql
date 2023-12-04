@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.0
+-- Dumped from database version 16.1
 -- Dumped by pg_dump version 16.1
 
 SET statement_timeout = 0;
@@ -266,16 +266,20 @@ INSERT INTO public.skill_level OVERRIDING SYSTEM VALUE VALUES (3, 'Advanced');
 -- Data for Name: time_slot; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (1, '2023-12-05', '10:00:00+01', '12:00:00+01', 1);
 INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (2, '2023-12-05', '10:00:00+01', '12:00:00+01', 2);
 INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (3, '2023-12-05', '10:00:00+01', '12:00:00+01', 3);
+INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (1, '2023-11-05', '10:00:00+01', '12:00:00+01', 1);
+INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (4, '2023-12-07', '10:00:00+01', '12:00:00+01', 1);
+INSERT INTO public.time_slot OVERRIDING SYSTEM VALUE VALUES (5, '2023-12-08', '10:00:00+01', '12:00:00+01', 1);
 
 
 --
 -- Data for Name: ensemble; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.ensemble OVERRIDING SYSTEM VALUE VALUES (1, 5, 10, 5, 3, 3, 1);
+INSERT INTO public.ensemble OVERRIDING SYSTEM VALUE VALUES (3, 2, 6, 7, 1, 5, 3);
+INSERT INTO public.ensemble OVERRIDING SYSTEM VALUE VALUES (2, 2, 2, 2, 2, 4, 2);
+INSERT INTO public.ensemble OVERRIDING SYSTEM VALUE VALUES (1, 5, 3, 2, 3, 3, 1);
 
 
 --
@@ -437,13 +441,33 @@ INSERT INTO public.lesson_price VALUES (3, 3, '£12.00');
 -- Data for Name: student_sibling; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.student_sibling VALUES (1, 3);
+INSERT INTO public.student_sibling VALUES (3, 1);
+INSERT INTO public.student_sibling VALUES (54, 87);
+INSERT INTO public.student_sibling VALUES (87, 54);
+INSERT INTO public.student_sibling VALUES (1, 5);
+INSERT INTO public.student_sibling VALUES (5, 1);
+INSERT INTO public.student_sibling VALUES (3, 5);
+INSERT INTO public.student_sibling VALUES (5, 3);
+INSERT INTO public.student_sibling VALUES (54, 88);
+INSERT INTO public.student_sibling VALUES (88, 54);
+INSERT INTO public.student_sibling VALUES (54, 89);
+INSERT INTO public.student_sibling VALUES (89, 54);
+INSERT INTO public.student_sibling VALUES (88, 89);
+INSERT INTO public.student_sibling VALUES (89, 88);
+INSERT INTO public.student_sibling VALUES (87, 88);
+INSERT INTO public.student_sibling VALUES (88, 87);
+INSERT INTO public.student_sibling VALUES (87, 89);
+INSERT INTO public.student_sibling VALUES (89, 87);
+INSERT INTO public.student_sibling VALUES (8, 7);
+INSERT INTO public.student_sibling VALUES (7, 8);
 
 
 --
 -- Name: ensemble_ensemble_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ensemble_ensemble_id_seq', 1, true);
+SELECT pg_catalog.setval('public.ensemble_ensemble_id_seq', 3, true);
 
 
 --
@@ -541,7 +565,7 @@ SELECT pg_catalog.setval('public.student_student_id_seq', 100, true);
 -- Name: time_slot_time_slot_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.time_slot_time_slot_id_seq', 3, true);
+SELECT pg_catalog.setval('public.time_slot_time_slot_id_seq', 5, true);
 
 
 --
